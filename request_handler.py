@@ -3,7 +3,7 @@ import json
 from views import get_all_authors, get_all_books, get_all_author_books
 from views import get_single_author, get_single_book, get_single_author_books
 from views import create_author, create_book, create_author_book
-from views import delete_author
+from views import delete_author, delete_book
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
