@@ -30,3 +30,15 @@ def get_single_author_books(id):
             requested_author_books = author_books
 
     return requested_author_books
+
+def create_author_book(author_book):
+    """creates an author book - will figure out how to link it eventually?
+
+    Args:
+        author_book (object): link between books and authors
+    """
+    max_id = AUTHOR_BOOKS[-1]["id"]
+    new_id = max_id + 1
+    author_book["id"] = new_id
+    AUTHOR_BOOKS.append(author_book)
+    return author_book
