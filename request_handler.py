@@ -4,6 +4,7 @@ from views import get_all_authors, get_all_books, get_all_author_books
 from views import get_single_author, get_single_book, get_single_author_books
 from views import create_author, create_book, create_author_book
 from views import delete_author, delete_book, delete_author_book
+from views import update_author
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
@@ -97,7 +98,16 @@ class HandleRequests(BaseHTTPRequestHandler):
     def do_PUT(self):
         """Handles PUT requests to the server
         """
-        self.do_POST()
+        self._set_headers(204)
+        content_len = int(self.headers.get('content-length', 0))
+        post_body = self.rfile.read(content_len)
+        post_body = json.loads(post_body)
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "authors":
+            update_author(id, post_body)
+
+        self.wfile.write("".encode())
 
 
     def do_DELETE(self):
