@@ -3,6 +3,7 @@ import json
 from views import get_all_authors, get_all_books, get_all_author_books
 from views import get_single_author, get_single_book, get_single_author_books
 from views import create_author, create_book, create_author_book
+from views import delete_author
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
@@ -97,6 +98,22 @@ class HandleRequests(BaseHTTPRequestHandler):
         """Handles PUT requests to the server
         """
         self.do_POST()
+
+
+    def do_DELETE(self):
+        """handles delete requests to the server
+        """
+        self._set_headers(204)
+        (resource, id) = self.parse_url(self.path)
+
+        if resource == "authors":
+            delete_author(id)
+        elif resource == "books":
+            delete_book(id)
+        elif resource == "author_books":
+            delete_author_book(id)
+
+        self.wfile.write("".encode())
 
 
 def main():

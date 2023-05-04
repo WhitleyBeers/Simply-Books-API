@@ -53,3 +53,13 @@ def create_author(author):
     author["id"] = new_id
     AUTHORS.append(author)
     return author
+
+def delete_author(id):
+    """deletes an author using the id
+    """
+    author_index = -1
+    for index, author in enumerate(AUTHORS):
+        if author["id"] == id:
+            author_index = index
+    if author_index >= 0:
+        AUTHORS.pop(author_index)
