@@ -2,7 +2,7 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
 from views import get_all_authors, get_all_books, get_all_author_books
 from views import get_single_author, get_single_book, get_single_author_books
-from views import create_author, create_book
+from views import create_author, create_book, create_author_book
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
@@ -87,6 +87,8 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_author(post_body)
         elif resource == "books":
             response = create_book(post_body)
+        elif resource == "author_books":
+            response = create_author_book(post_body)
 
         self.wfile.write(json.dumps(response).encode())
 
