@@ -42,3 +42,14 @@ def create_author_book(author_book):
     author_book["id"] = new_id
     AUTHOR_BOOKS.append(author_book)
     return author_book
+
+
+def delete_author_book(id):
+    """deletes an author using the id
+    """
+    author_book_index = -1
+    for index, author_book in enumerate(AUTHOR_BOOKS):
+        if author_book["id"] == id:
+            author_book_index = index
+    if author_book_index >= 0:
+        AUTHOR_BOOKS.pop(author_book_index)
