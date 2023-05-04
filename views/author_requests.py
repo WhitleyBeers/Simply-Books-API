@@ -63,3 +63,11 @@ def delete_author(id):
             author_index = index
     if author_index >= 0:
         AUTHORS.pop(author_index)
+
+def update_author(id, new_author):
+    """updates author using id
+    """
+    for index, author in enumerate(AUTHORS):
+        if author["id"] == id:
+            AUTHORS[index] = new_author
+            break
