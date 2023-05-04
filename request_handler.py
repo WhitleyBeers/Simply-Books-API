@@ -1,9 +1,9 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
-from views import get_all_authors, get_all_books, get_all_author_books
-from views import get_single_author, get_single_book, get_single_author_books
-from views import create_author, create_book, create_author_book
-from views import delete_author, delete_book, delete_author_book
+from views import get_all_authors, get_all_books
+from views import get_single_author, get_single_book
+from views import create_author, create_book
+from views import delete_author, delete_book
 from views import update_author, update_book
 
 class HandleRequests(BaseHTTPRequestHandler):
@@ -66,12 +66,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             else:
                 response = get_all_books()
 
-        elif resource == "author_books":
-            if id is not None:
-                response = get_single_author_books(id)
-            else:
-                response = get_all_author_books()
-
         self.wfile.write(json.dumps(response).encode())
 
 
@@ -89,8 +83,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             response = create_author(post_body)
         elif resource == "books":
             response = create_book(post_body)
-        elif resource == "author_books":
-            response = create_author_book(post_body)
 
         self.wfile.write(json.dumps(response).encode())
 
@@ -122,8 +114,6 @@ class HandleRequests(BaseHTTPRequestHandler):
             delete_author(id)
         elif resource == "books":
             delete_book(id)
-        elif resource == "author_books":
-            delete_author_book(id)
 
         self.wfile.write("".encode())
 
