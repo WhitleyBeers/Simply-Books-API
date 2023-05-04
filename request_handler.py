@@ -4,7 +4,7 @@ from views import get_all_authors, get_all_books, get_all_author_books
 from views import get_single_author, get_single_book, get_single_author_books
 from views import create_author, create_book, create_author_book
 from views import delete_author, delete_book, delete_author_book
-from views import update_author
+from views import update_author, update_book
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
@@ -106,6 +106,8 @@ class HandleRequests(BaseHTTPRequestHandler):
 
         if resource == "authors":
             update_author(id, post_body)
+        elif resource == "books":
+            update_book(id, post_body)
 
         self.wfile.write("".encode())
 
