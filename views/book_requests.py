@@ -50,13 +50,18 @@ def get_single_book(id):
     Args:
         id (int): id of book
     """
-    requested_book = None
-
-    for book in BOOKS:
-        if book["id"] == id:
-            requested_book = book
-
-    return requested_book
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT * from Books
+        WHERE id = ?
+        """, ( id, ))
+        data = db_cursor.fetchone()
+        book = Book(data['id'], data['title'], data['image'],
+                    data['price'], data['sale'], data['description'],
+                    data['author_id'])
+        return book.__dict__
 
 
 def create_book(book):
