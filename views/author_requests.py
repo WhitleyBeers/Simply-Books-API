@@ -1,3 +1,7 @@
+import sqlite3
+import json
+from models import Author
+
 AUTHORS = [
     {
         "id": 1,
@@ -28,7 +32,21 @@ AUTHORS = [
 def get_all_authors():
     """returns all authors
     """
-    return AUTHORS
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT * from Authors
+        """)
+        authors = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            author = Author(row['id'], row['email'], row['first_name'],
+                            row['last_name'], row['image'], row['favorite'])
+            authors.append(author.__dict__)
+
+    return authors
 
 
 def get_single_author(id):
