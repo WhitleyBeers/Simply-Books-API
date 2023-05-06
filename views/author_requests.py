@@ -54,13 +54,17 @@ def get_single_author(id):
     Args:
         id (int): id of author
     """
-    requested_author = None
-
-    for author in AUTHORS:
-        if author["id"] == id:
-            requested_author = author
-
-    return requested_author
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT * from Authors
+        WHERE id = ?
+        """, ( id, ))
+        data = db_cursor.fetchone()
+        author = Author(data['id'], data['email'], data['first_name'],
+                        data['last_name'], data['image'], data['favorite'])
+        return author.__dict__
 
 
 def create_author(author):
