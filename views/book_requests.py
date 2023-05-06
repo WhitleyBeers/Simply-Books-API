@@ -1,3 +1,7 @@
+import sqlite3
+import json
+from models import Book
+
 BOOKS = [
     {
         "id": 1,
@@ -23,7 +27,22 @@ BOOKS = [
 def get_all_books():
     """returns all books
     """
-    return BOOKS
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT * from Books
+        """)
+        books = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            book = Book(row['id'], row['title'], row['image'],
+                        row['price'], row['sale'], row['description'],
+                        row['author_id'])
+            books.append(book.__dict__)
+
+    return books
 
 
 def get_single_book(id):
