@@ -1,3 +1,7 @@
+import sqlite3
+import json
+from models import Book
+
 BOOKS = [
     {
         "id": 1,
@@ -23,7 +27,22 @@ BOOKS = [
 def get_all_books():
     """returns all books
     """
-    return BOOKS
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT * from Books
+        """)
+        books = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            book = Book(row['id'], row['title'], row['image'],
+                        row['price'], row['sale'], row['description'],
+                        row['author_id'])
+            books.append(book.__dict__)
+
+    return books
 
 
 def get_single_book(id):
@@ -31,13 +50,18 @@ def get_single_book(id):
     Args:
         id (int): id of book
     """
-    requested_book = None
-
-    for book in BOOKS:
-        if book["id"] == id:
-            requested_book = book
-
-    return requested_book
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT * from Books
+        WHERE id = ?
+        """, ( id, ))
+        data = db_cursor.fetchone()
+        book = Book(data['id'], data['title'], data['image'],
+                    data['price'], data['sale'], data['description'],
+                    data['author_id'])
+        return book.__dict__
 
 
 def create_book(book):

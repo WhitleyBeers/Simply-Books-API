@@ -24,3 +24,6 @@ INSERT INTO `Books` VALUES (null, "Bloodshed", "url placeholder", 16.00, True, "
 INSERT INTO `Authors` VALUES (null, "lemony@snicket.com", "Lemony", "Snicket", "url placeholder", False);
 INSERT INTO `Authors` VALUES (null, "stephenie@meyer.com", "Stephenie", "Meyer", "url placeholder", False);
 INSERT INTO `Books` VALUES (null, "The Grim Grotto", "url placeholder", 12.99, False, "The Grim Grotto is the eleventh novel in the children's book series A Series of Unfortunate Events by Lemony Snicket.", 2);
+
+SELECT * from Authors a
+JOIN Books b ON a.id = b.author_id

@@ -1,3 +1,7 @@
+import sqlite3
+import json
+from models import Author
+
 AUTHORS = [
     {
         "id": 1,
@@ -28,7 +32,21 @@ AUTHORS = [
 def get_all_authors():
     """returns all authors
     """
-    return AUTHORS
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+
+        db_cursor.execute("""
+        SELECT * from Authors
+        """)
+        authors = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            author = Author(row['id'], row['email'], row['first_name'],
+                            row['last_name'], row['image'], row['favorite'])
+            authors.append(author.__dict__)
+
+    return authors
 
 
 def get_single_author(id):
@@ -36,13 +54,37 @@ def get_single_author(id):
     Args:
         id (int): id of author
     """
-    requested_author = None
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT * from Authors
+        WHERE id = ?
+        """, ( id, ))
+        data = db_cursor.fetchone()
+        author = Author(data['id'], data['email'], data['first_name'],
+                        data['last_name'], data['image'], data['favorite'])
+        return author.__dict__
 
-    for author in AUTHORS:
-        if author["id"] == id:
-            requested_author = author
 
-    return requested_author
+def get_favorite_authors(favorite):
+    """gets authors where favorite = True
+    """
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT * from Authors
+        WHERE favorite IS ?
+        """, ( favorite, ))
+        authors = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            author = Author(row['id'], row['email'], row['first_name'],
+                            row['last_name'], row['image'], row['favorite'])
+            authors.append(author.__dict__)
+
+    return authors
 
 
 def create_author(author):
