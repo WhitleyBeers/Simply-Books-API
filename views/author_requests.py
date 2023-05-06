@@ -67,6 +67,26 @@ def get_single_author(id):
         return author.__dict__
 
 
+def get_favorite_authors(favorite):
+    """gets authors where favorite = True
+    """
+    with sqlite3.connect("./simply_books.sqlite3") as conn:
+        conn.row_factory = sqlite3.Row
+        db_cursor = conn.cursor()
+        db_cursor.execute("""
+        SELECT * from Authors
+        WHERE favorite IS ?
+        """, ( favorite, ))
+        authors = []
+        dataset = db_cursor.fetchall()
+        for row in dataset:
+            author = Author(row['id'], row['email'], row['first_name'],
+                            row['last_name'], row['image'], row['favorite'])
+            authors.append(author.__dict__)
+
+    return authors
+
+
 def create_author(author):
     """creates an author
     """

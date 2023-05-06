@@ -1,30 +1,34 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+from urllib.parse import urlparse, parse_qs
 from views import get_all_authors, get_all_books
 from views import get_single_author, get_single_book
 from views import create_author, create_book
 from views import delete_author, delete_book
 from views import update_author, update_book
+from views import get_favorite_authors
 
 class HandleRequests(BaseHTTPRequestHandler):
     """Controls the functionality of any GET, PUT, POST, DELETE requests to the server
     """
 
     def parse_url(self, path):
-        """parses the url
+        """parses the url into the resource and id
         """
-        path_params = path.split("/")
+        parsed_url = urlparse(path)
+        path_params = parsed_url.path.split('/')
         resource = path_params[1]
-        id = None
 
+        if parsed_url.query:
+            query = parse_qs(parsed_url.query)
+            return (resource, query)
+
+        pk = None
         try:
-            id = int(path_params[2])
-        except IndexError:
+            pk = int(path_params[2])
+        except (IndexError, ValueError):
             pass
-        except ValueError:
-            pass
-
-        return (resource, id)
+        return (resource, pk)
 
 
     def _set_headers(self, status):
@@ -52,19 +56,27 @@ class HandleRequests(BaseHTTPRequestHandler):
         self._set_headers(200)
         response = {}
 
-        (resource, id) = self.parse_url(self.path)
+        parsed = self.parse_url(self.path)
 
-        if resource == "authors":
-            if id is not None:
-                response = get_single_author(id)
-            else:
-                response = get_all_authors()
+        if '?' not in self.path:
+            ( resource, id ) = parsed
 
-        elif resource == "books":
-            if id is not None:
-                response = get_single_book(id)
-            else:
-                response = get_all_books()
+            if resource == "authors":
+                if id is not None:
+                    response = get_single_author(id)
+                else:
+                    response = get_all_authors()
+
+            elif resource == "books":
+                if id is not None:
+                    response = get_single_book(id)
+                else:
+                    response = get_all_books()
+
+        else:
+            (resource, query) = parsed
+            if query.get('favorites') and resource == 'authors':
+                response = get_favorite_authors(query['favorites'][0])
 
         self.wfile.write(json.dumps(response).encode())
 
